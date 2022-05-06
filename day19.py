@@ -1,3 +1,6 @@
+import random
+import re
+
 def part1():
     distinct = []
 
@@ -13,82 +16,77 @@ def part1():
                 distinct.append(nextMove)
 
     print(len(distinct))
-
+            
 
 def part2():
     with open('input.txt') as file:
         data = [line.replace(' ', '').strip().split('=>') for line in file]
 
-    bad_switches = {}
-    for line in data:
-        bad_switches[line[0]] = list([-1])
+    seed = 'ORnPBPMgArCaCaCaSiThCaCaSiThCaCaPBSiRnFArRnFArCaCaSiThCaCaSiThCaCaCaCaCaCaSiRnFYFArSiRnMgArCaSiRnPTiTiBFYPBFArSiRnCaSiRnTiRnFArSiAlArPTiBPTiRnCaSiAlArCaPTiTiBPMgYFArPTiRnFArSiRnCaCaFArRnCaFArCaSiRnSiRnMgArFYCaSiRnMgArCaCaSiThPRnFArPBCaSiRnMgArCaCaSiThCaSiRnTiMgArFArSiThSiThCaCaSiRnMgArCaCaSiRnFArTiBPTiRnCaSiAlArCaPTiRnFArPBPBCaCaSiThCaPBSiThPRnFArSiThCaSiThCaSiThCaPTiBSiRnFYFArCaCaPRnFArPBCaCaPBSiRnTiRnFArCaPRnFArSiRnCaCaCaSiThCaRnCaFArYCaSiRnFArBCaCaCaSiThFArPBFArCaSiRnFArRnCaCaCaFArSiRnFArTiRnPMgArF'
 
 
-    #seed = 'ORnPBPMgArCaCaCaSiThCaCaSiThCaCaPBSiRnFArRnFArCaCaSiThCaCaSiThCaCaCaCaCaCaSiRnFYFArSiRnMgArCaSiRnPTiTiBFYPBFArSiRnCaSiRnTiRnFArSiAlArPTiBPTiRnCaSiAlArCaPTiTiBPMgYFArPTiRnFArSiRnCaCaFArRnCaFArCaSiRnSiRnMgArFYCaSiRnMgArCaCaSiThPRnFArPBCaSiRnMgArCaCaSiThCaSiRnTiMgArFArSiThSiThCaCaSiRnMgArCaCaSiRnFArTiBPTiRnCaSiAlArCaPTiRnFArPBPBCaCaSiThCaPBSiThPRnFArSiThCaSiThCaSiThCaPTiBSiRnFYFArCaCaPRnFArPBCaCaPBSiRnTiRnFArCaPRnFArSiRnCaCaCaSiThCaRnCaFArYCaSiRnFArBCaCaCaSiThFArPBFArCaSiRnFArRnCaCaCaFArSiRnFArTiRnPMgArF'
-    seed = 'HOH'
-    ret = step('e', seed, data, bad_switches, 0)
-    print(ret)
+    # count = 0
+    # for line in data:
+    #     count += len(line[0]) + len(line[1])
 
+    # for line in data:
+    #     first = line[0].replace('Rn', '(').replace('Ar', ')').replace('Y', ',')
+    #     second = line[0].replace('Rn', '(').replace('Ar', ')').replace('Y', ',')
+
+    #     for l in first:
+    #         if l == '(' or l == ')':
+    #             count -= 1
+    #         elif l == ',':
+    #             count -= 2
+
+    #     for l in second:
+    #         if l == '(' or l == ')':
+    #             count -= 1
+    #         elif l == ',':
+    #             count -= 2
+
+
+
+    # seed = seed.replace('Rn', '(')
+    # seed = seed.replace('Ar', ')')
+    # seed = seed.replace('Y', ',')
+
+    # for c in seed:
+    #     if c == '(' or c == ')':
+    #         count -= 1
+    #     elif c == ',':
+    #         count -= 2
     
 
-def step(string, seed, data, bad_switches, count):
-    if string == seed:
-        return count
-    else:
-        new_string = ''
-        for i in range(len(string)):
-            checker_one = ''
-            checker_two = ''
-            if len(string) == 1:
-                checker_one = string
-            elif i < len(string) - 1:
-                checker_one = string[i]
-                checker_two = string[i : i + 2]
-            else:
-                checker_one = string[i]
 
-            for line in data:
-                if len(bad_switches[line[0]]) == 1:
-                    if line[0] == checker_one:
-                        new_string = string.replace(checker_one, line[1], 1)
-                        if new_string == seed:
-                            return count
-                        elif new_string in seed and len(new_string) < len(string):
-                            step(new_string, seed, data, bad_switches, count + 1)
-                        else:
-                            bad_switches[line[0]].append(string.index(line[0]))
-                            step(new_string, seed, data, bad_switches, count)
-                    elif checker_two != '' and line[0] == checker_two:
-                        new_string = string.replace(checker_two, line[1], 1)
-                        if new_string == seed:
-                            return count
-                        elif new_string in seed and len(new_string) < len(string):
-                            step(new_string, seed, data, bad_switches, count + 1)
-                        else:
-                            bad_switches[line[0]].append(string.index(line[0]))
-                            step(new_string, seed, data, bad_switches, count)
-                else:
-                    if line[0] == checker_one:
-                        new_string = string[:bad_switches[line[0]][-1]] + string[bad_switches[line[0]][-1] + 1:].replace(checker_one, line[1], 1)
-                        if new_string == seed:
-                            return count
-                        elif new_string in seed and len(new_string) < len(string):
-                            step(new_string, seed, data, bad_switches, count + 1)
-                        else:
-                            if line[0] in string[bad_switches[line[0]][-1] + 1:]:
-                                bad_switches[line[0]].append(string[bad_switches[line[0]][-1] + 1:].index(line[0]) + len(string[:bad_switches[line[0]][-1]]) -1)
-                            step(new_string, seed, data, bad_switches, count)
-                    elif checker_two != '' and line[0] == checker_two:
-                        new_string = string[:bad_switches[line[0]][-1]] + string[bad_switches[line[0]][-1] + 1:].replace(checker_two, line[1], 1)
-                        if new_string == seed:
-                            return count
-                        elif new_string in seed and len(new_string) < len(string):
-                            step(new_string, seed, data, bad_switches, count + 1)
-                        else:
-                            if line[0] in string[bad_switches[line[0]][-1] + 1:]:
-                                bad_switches[line[0]].append(string[bad_switches[line[0]][-1] + 1:].index(line[0]) + len(string[:bad_switches[line[0]][-1]]) - 1)
-                            step(new_string, seed, data, bad_switches, count)
+    # taken from the advent of code sub
+    reps = data
+    mol = seed
 
-    return count
+    target = mol
+    part2 = 0
+
+    while target != 'e':
+        tmp = target
+        for a, b in reps:
+            if b not in target:
+                continue
+
+            target = target.replace(b, a, 1)
+            part2 += 1
+
+        if tmp == target:
+            target = mol
+            part2 = 0
+            random.shuffle(reps)
+
+    print(part2)
+
+#207
+
+
+   
+    
+
 
 part2()
